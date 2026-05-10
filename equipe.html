@@ -1,0 +1,95 @@
+<!doctype html>
+<html lang="fr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Équipe - Maison Velours</title>
+    <meta
+      name="description"
+      content="Rencontrez les praticiennes Maison Velours."
+    />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <header class="site-header">
+      <div class="container nav-wrap">
+        <a class="logo" href="index.html">Maison Velours</a>
+        <button class="menu-toggle" aria-label="Ouvrir le menu">☰</button>
+        <nav class="main-nav">
+          <a href="index.html">Accueil</a>
+          <a href="massages.html">Massages</a>
+          <a href="galerie.html">Galerie</a>
+          <a href="equipe.html" class="active">Équipe</a>
+          <a href="contact.html">Contact</a>
+        </nav>
+      </div>
+    </header>
+    <main class="page-main">
+      <section class="section">
+        <div class="container">
+          <p class="kicker">Les Praticiennes</p>
+          <h1>Une équipe experte et attentive</h1>
+          <div class="team-fade-slider" aria-label="Carrousel de l'équipe">
+            <button class="team-arrow team-prev" type="button" aria-label="Praticienne précédente">
+              ‹
+            </button>
+
+            <figure class="team-slide-card">
+              <img class="team-slide-image" src="assets/equipe-amelie.png" alt="Amélie" loading="lazy" />
+              <figcaption class="team-slide-name">Amélie · Tantra sensoriel · Détente profonde</figcaption>
+            </figure>
+
+            <button class="team-arrow team-next" type="button" aria-label="Praticienne suivante">
+              ›
+            </button>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <div class="team-lightbox" aria-hidden="true">
+      <button class="team-lightbox-btn team-lightbox-close" aria-label="Fermer">×</button>
+      <button class="team-lightbox-btn team-lightbox-prev" aria-label="Image précédente">‹</button>
+      <figure class="team-lightbox-figure">
+        <img class="team-lightbox-image" src="" alt="" />
+        <figcaption class="team-lightbox-name"></figcaption>
+      </figure>
+      <button class="team-lightbox-btn team-lightbox-next" aria-label="Image suivante">›</button>
+    </div>
+
+    <footer class="site-footer">
+      <div class="container footer-wrap">
+        <div class="footer-brand">
+          <p class="footer-title">Maison Velours</p>
+          <p>Expériences de massage premium à Marseille, dans un cadre discret et raffiné.</p>
+        </div>
+        <nav class="footer-nav" aria-label="Navigation secondaire">
+          <p class="footer-title">Navigation</p>
+          <a href="index.html">Accueil</a>
+          <a href="massages.html">Massages</a>
+          <a href="galerie.html">Galerie</a>
+          <a href="equipe.html">Équipe</a>
+          <a href="contact.html">Contact</a>
+        </nav>
+        <div class="footer-contact">
+          <p class="footer-title">Contact</p>
+          <p>Marseille, 6ème</p>
+          <p>Ouvert 7j/7</p>
+          <p>10h - 00h</p>
+        </div>
+        <nav class="footer-legal" aria-label="Informations légales">
+          <p class="footer-title">Informations légales</p>
+          <a href="#">Mentions légales</a>
+          <a href="#">Politique de confidentialité</a>
+          <a href="#">Conditions d'utilisation</a>
+          <a href="#">CGV</a>
+        </nav>
+      </div>
+      <div class="container footer-bottom">
+        <p>Services de bien-être uniquement. Aucun service inapproprié ou illégal n'est proposé.</p>
+        <p>© 2026 Maison Velours - Tous droits réservés</p>
+      </div>
+    </footer>
+    <script src="script.js"></script>
+  </body>
+</html>
