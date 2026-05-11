@@ -24,6 +24,74 @@ function getSupabaseBookingClient() {
   return supabaseBookingClient;
 }
 
+/** Paris wall-clock (DST-safe) for booking defaults. */
+function getParisWallParts(date = new Date()) {
+  const dtf = new Intl.DateTimeFormat("en-GB", {
+    timeZone: "Europe/Paris",
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+    hour: "2-digit",
+    minute: "2-digit",
+    hour12: false,
+  });
+  const parts = dtf.formatToParts(date);
+  const map = {};
+  for (const p of parts) {
+    if (p.type !== "literal") map[p.type] = p.value;
+  }
+  return {
+    year: map.year,
+    month: map.month,
+    day: map.day,
+    hour: parseInt(map.hour, 10),
+    minute: parseInt(map.minute, 10),
+  };
+}
+
+function parisTodayYmd() {
+  const p = getParisWallParts();
+  return `${p.year}-${p.month}-${p.day}`;
+}
+
+/**
+ * Default date (yyyy-mm-dd) and time (HH:mm) for booking: Paris calendar date
+ * and time rounded up to the next quarter-hour (exact quarter stays).
+ * After 23:45 → next calendar day in Paris at 00:00.
+ * Times before 10:00 Paris → 10:00 (prise de rendez-vous affichée sur le site).
+ */
+function getParisBookingSlotDefaults() {
+  const p = getParisWallParts();
+  const y = Number(p.year);
+  const mo = Number(p.month);
+  const da = Number(p.day);
+  const totalMin = p.hour * 60 + p.minute;
+  let next = Math.ceil(totalMin / 15) * 15;
+  let dateStr = `${p.year}-${p.month}-${p.day}`;
+  let hourNum;
+  let minuteNum;
+
+  if (next >= 24 * 60) {
+    const nextP = getParisWallParts(new Date(Date.UTC(y, mo - 1, da + 1, 14, 0, 0)));
+    dateStr = `${nextP.year}-${nextP.month}-${nextP.day}`;
+    hourNum = 0;
+    minuteNum = 0;
+  } else {
+    hourNum = Math.floor(next / 60);
+    minuteNum = next % 60;
+  }
+
+  const openMins = 10 * 60;
+  if (hourNum * 60 + minuteNum < openMins) {
+    hourNum = 10;
+    minuteNum = 0;
+  }
+
+  const hour = String(hourNum).padStart(2, "0");
+  const minute = String(minuteNum).padStart(2, "0");
+  return { dateStr, hour, minute };
+}
+
 const menuButtons = document.querySelectorAll(".menu-toggle");
 
 menuButtons.forEach((button) => {
@@ -465,15 +533,14 @@ menuButtons.forEach((button) => {
       });
     });
 
+    const bookingDefaults = getParisBookingSlotDefaults();
+
     dateInputs.forEach((input) => {
       const setMinDate = () => {
-        const now = new Date();
-        const yyyy = now.getFullYear();
-        const mm = String(now.getMonth() + 1).padStart(2, "0");
-        const dd = String(now.getDate()).padStart(2, "0");
-        input.min = `${yyyy}-${mm}-${dd}`;
+        input.min = parisTodayYmd();
       };
       setMinDate();
+      input.value = bookingDefaults.dateStr;
       input.addEventListener("click", () => {
         if (typeof input.showPicker === "function") {
           try {
@@ -493,14 +560,21 @@ menuButtons.forEach((button) => {
       const panel = picker.querySelector(".time-picker-panel");
       const hourBtns = Array.from(picker.querySelectorAll("[data-hour]"));
       const minuteBtns = Array.from(picker.querySelectorAll("[data-minute]"));
-      let selectedHour = "11";
-      let selectedMinute = "30";
+      let selectedHour = bookingDefaults.hour;
+      let selectedMinute = bookingDefaults.minute;
 
       const sync = () => {
         const value = `${selectedHour}:${selectedMinute}`;
         if (displayValue) displayValue.textContent = value;
         if (hiddenInput) hiddenInput.value = value;
       };
+
+      hourBtns.forEach((h) => {
+        h.classList.toggle("active", h.getAttribute("data-hour") === selectedHour);
+      });
+      minuteBtns.forEach((m) => {
+        m.classList.toggle("active", m.getAttribute("data-minute") === selectedMinute);
+      });
 
       hourBtns.forEach((h) => {
         h.addEventListener("click", () => {
