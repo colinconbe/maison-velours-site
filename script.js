@@ -337,6 +337,73 @@ menuButtons.forEach((button) => {
   }
 })();
 
+// Contact page form -> Supabase
+(() => {
+  const form = document.querySelector("#reservation-form");
+  if (!form || document.querySelector(".booking-wizard")) return;
+
+  const submitBtn = form.querySelector("button[type='submit']");
+  const nameInput = form.querySelector("#name");
+  const phoneInput = form.querySelector("#phone");
+  const emailInput = form.querySelector("#email");
+  const messageInput = form.querySelector("#message");
+  const feedback = form.querySelector("#contact-form-feedback");
+  if (!submitBtn || !nameInput || !emailInput || !messageInput || !feedback) return;
+
+  const showValidationError = (field, text) => {
+    field.focus();
+    feedback.textContent = text;
+  };
+
+  form.addEventListener("submit", async (event) => {
+    event.preventDefault();
+    feedback.textContent = "";
+
+    const name = nameInput.value.trim();
+    const phone = phoneInput?.value.trim() || null;
+    const email = emailInput.value.trim();
+    const message = messageInput.value.trim();
+
+    if (!name) {
+      showValidationError(nameInput, "Merci d'indiquer votre nom.");
+      return;
+    }
+    if (!email) {
+      showValidationError(emailInput, "Merci d'indiquer votre email.");
+      return;
+    }
+    if (!message) {
+      showValidationError(messageInput, "Merci d'indiquer votre message.");
+      return;
+    }
+
+    const client = getSupabaseBookingClient();
+    if (!client) {
+      feedback.textContent =
+        "Connexion au service de contact indisponible. Rechargez la page ou réessayez dans quelques minutes.";
+      return;
+    }
+
+    submitBtn.disabled = true;
+    submitBtn.textContent = "Envoi...";
+    const { error } = await client.from("contact_submissions").insert([
+      { name, email, phone, message },
+    ]);
+    submitBtn.disabled = false;
+    submitBtn.textContent = "Envoyer";
+
+    if (error) {
+      console.error(error);
+      feedback.textContent =
+        "Impossible d'envoyer votre message pour le moment. Merci de réessayer dans quelques minutes.";
+      return;
+    }
+
+    form.reset();
+    feedback.textContent = "Votre message a bien été envoyé, vous allez recevoir une réponse très prochainement.";
+  });
+})();
+
 // Booking wizard modal (open + steps + close)
 (() => {
   const launchButtons = Array.from(document.querySelectorAll(".booking-launch-btn"));

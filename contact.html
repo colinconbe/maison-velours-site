@@ -37,14 +37,15 @@
             </article>
             <form class="card contact-form" id="reservation-form">
               <label for="name">Nom</label>
-              <input id="name" type="text" placeholder="Votre nom" />
+              <input id="name" type="text" placeholder="Votre nom" required />
               <label for="phone">Téléphone</label>
               <input id="phone" type="tel" placeholder="Votre numéro" />
               <label for="email">Email</label>
-              <input id="email" type="email" placeholder="Votre email" />
+              <input id="email" type="email" placeholder="Votre email" required />
               <label for="message">Message</label>
-              <textarea id="message" rows="5" placeholder="Votre question"></textarea>
-              <button class="btn btn-primary" type="button">Envoyer</button>
+              <textarea id="message" rows="5" placeholder="Votre question" required></textarea>
+              <p id="contact-form-feedback" class="privacy-note" role="status" aria-live="polite"></p>
+              <button class="btn btn-primary" type="submit">Envoyer</button>
             </form>
           </div>
         </div>
@@ -142,6 +143,7 @@
         <p>© 2026 Maison Velours - Tous droits réservés</p>
       </div>
     </footer>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
     <script src="script.js"></script>
   </body>
 </html>
