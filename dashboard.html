@@ -1,0 +1,238 @@
+<!doctype html>
+<html lang="fr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="robots" content="noindex, nofollow" />
+    <title>Tableau de bord - Maison Velours</title>
+    <link rel="stylesheet" href="styles.css" />
+    <style>
+      .dash-wrap {
+        max-width: 1000px;
+        margin: 60px auto;
+        padding: 0 20px;
+        color: var(--text);
+      }
+      .dash-login {
+        max-width: 360px;
+        margin: 120px auto;
+        text-align: center;
+      }
+      .dash-login input {
+        width: 100%;
+        padding: 10px 14px;
+        margin: 16px 0;
+        border-radius: 6px;
+        border: 1px solid var(--border);
+        background: var(--bg-soft);
+        color: var(--text);
+      }
+      .dash-login button,
+      .dash-controls button {
+        background: var(--gold);
+        color: var(--bg);
+        border: none;
+        border-radius: 6px;
+        padding: 10px 20px;
+        font-weight: 600;
+        cursor: pointer;
+      }
+      .dash-section {
+        margin-bottom: 40px;
+      }
+      .dash-section h2 {
+        border-bottom: 1px solid var(--border);
+        padding-bottom: 8px;
+      }
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 0.9rem;
+      }
+      th,
+      td {
+        text-align: left;
+        padding: 8px 10px;
+        border-bottom: 1px solid var(--border);
+      }
+      .dash-controls {
+        display: flex;
+        gap: 10px;
+        align-items: center;
+        margin-bottom: 20px;
+      }
+      .dash-controls select {
+        padding: 8px;
+        border-radius: 6px;
+        background: var(--bg-soft);
+        color: var(--text);
+        border: 1px solid var(--border);
+      }
+      .dash-error {
+        color: #e07a5f;
+        font-size: 0.85rem;
+      }
+      .dash-empty {
+        color: var(--muted);
+        font-style: italic;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="login" class="dash-wrap dash-login">
+      <h1>Tableau de bord</h1>
+      <input type="password" id="pwd" placeholder="Mot de passe" />
+      <br />
+      <button onclick="login()">Entrer</button>
+      <p id="login-error" class="dash-error"></p>
+    </div>
+
+    <div id="dashboard" class="dash-wrap" style="display: none">
+      <h1>Tableau de bord - Maison Velours</h1>
+      <div class="dash-controls">
+        <label for="days">Période :</label>
+        <select id="days" onchange="loadData()">
+          <option value="1">Dernières 24h</option>
+          <option value="3" selected>Derniers 3 jours</option>
+        </select>
+        <button onclick="loadData()">Rafraîchir</button>
+      </div>
+
+      <div id="errors"></div>
+
+      <div class="dash-section">
+        <h2>Trafic (Microsoft Clarity)</h2>
+        <div id="clarity-content"><p class="dash-empty">Chargement...</p></div>
+      </div>
+
+      <div class="dash-section">
+        <h2>Réservations (Supabase)</h2>
+        <div id="bookings-content"><p class="dash-empty">Chargement...</p></div>
+      </div>
+
+      <div class="dash-section">
+        <h2>Messages de contact (Supabase)</h2>
+        <div id="contacts-content"><p class="dash-empty">Chargement...</p></div>
+      </div>
+    </div>
+
+    <script>
+      function getPwd() {
+        return sessionStorage.getItem("dash_pwd") || "";
+      }
+
+      function login() {
+        const pwd = document.getElementById("pwd").value;
+        sessionStorage.setItem("dash_pwd", pwd);
+        document.getElementById("login-error").textContent = "";
+        loadData(true);
+      }
+
+      function escapeHtml(str) {
+        if (str === null || str === undefined) return "";
+        return String(str)
+          .replace(/&/g, "&amp;")
+          .replace(/</g, "&lt;")
+          .replace(/>/g, "&gt;");
+      }
+
+      function renderTable(rows, columns) {
+        if (!rows || rows.length === 0) {
+          return '<p class="dash-empty">Aucune donnée pour cette période.</p>';
+        }
+        let html = "<table><thead><tr>";
+        columns.forEach((c) => (html += `<th>${c.label}</th>`));
+        html += "</tr></thead><tbody>";
+        rows.forEach((row) => {
+          html += "<tr>";
+          columns.forEach((c) => (html += `<td>${escapeHtml(row[c.key])}</td>`));
+          html += "</tr>";
+        });
+        html += "</tbody></table>";
+        return html;
+      }
+
+      function renderClarity(clarity) {
+        if (!clarity) return '<p class="dash-empty">Pas de données Clarity.</p>';
+        let html = "";
+        const traffic = clarity.find((m) => m.metricName === "Traffic");
+        if (traffic && traffic.information && traffic.information.length) {
+          const totalSessions = traffic.information.reduce(
+            (sum, i) => sum + (parseInt(i.totalSessionCount, 10) || 0),
+            0
+          );
+          html += `<p><strong>${totalSessions}</strong> sessions sur la période.</p>`;
+        }
+        const pages = clarity.find((m) => m.metricName === "Popular Pages" || m.metricName === "PopularPages");
+        if (pages && pages.information && pages.information.length) {
+          html += "<h3>Pages les plus consultées</h3>";
+          html += renderTable(
+            pages.information.map((p) => ({
+              url: p.URL || p.Url || "(inconnu)",
+              visits: p.visitorsCount || p.VisitorsCount || p.subTotal || "",
+            })),
+            [
+              { key: "url", label: "Page" },
+              { key: "visits", label: "Visiteurs" },
+            ]
+          );
+        }
+        return html || '<p class="dash-empty">Pas assez de données pour cette période.</p>';
+      }
+
+      async function loadData(isLogin) {
+        const days = document.getElementById("days") ? document.getElementById("days").value : 3;
+        const pwd = getPwd();
+        try {
+          const res = await fetch("/api/dashboard?days=" + days, {
+            headers: { "x-admin-password": pwd },
+          });
+          if (res.status === 401) {
+            if (isLogin) {
+              document.getElementById("login-error").textContent = "Mot de passe incorrect.";
+            } else {
+              document.getElementById("login").style.display = "block";
+              document.getElementById("dashboard").style.display = "none";
+            }
+            return;
+          }
+          const data = await res.json();
+          document.getElementById("login").style.display = "none";
+          document.getElementById("dashboard").style.display = "block";
+
+          document.getElementById("errors").innerHTML = (data.errors || [])
+            .map((e) => `<p class="dash-error">${escapeHtml(e)}</p>`)
+            .join("");
+
+          document.getElementById("clarity-content").innerHTML = renderClarity(data.clarity);
+
+          document.getElementById("bookings-content").innerHTML = renderTable(data.bookings, [
+            { key: "created_at", label: "Date" },
+            { key: "name", label: "Nom" },
+            { key: "phone", label: "Téléphone" },
+            { key: "email", label: "Email" },
+            { key: "service", label: "Service" },
+            { key: "preferred_date", label: "Date souhaitée" },
+            { key: "preferred_time", label: "Heure" },
+            { key: "format", label: "Format" },
+          ]);
+
+          document.getElementById("contacts-content").innerHTML = renderTable(data.contacts, [
+            { key: "created_at", label: "Date" },
+            { key: "name", label: "Nom" },
+            { key: "email", label: "Email" },
+            { key: "phone", label: "Téléphone" },
+            { key: "message", label: "Message" },
+          ]);
+        } catch (e) {
+          document.getElementById("errors").innerHTML = `<p class="dash-error">Erreur: ${escapeHtml(e.message)}</p>`;
+        }
+      }
+
+      // Auto-login si mot de passe déjà en session
+      if (getPwd()) {
+        loadData();
+      }
+    </script>
+  </body>
+</html>
