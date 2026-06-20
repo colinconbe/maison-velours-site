@@ -1,47 +1,47 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
-    <loc>https://maison-velours-site.vercel.app/</loc>
+    <loc>https://lamaisonvelours.com/</loc>
     <priority>1.0</priority>
   </url>
   <url>
-    <loc>https://maison-velours-site.vercel.app/massages.html</loc>
+    <loc>https://lamaisonvelours.com/massages.html</loc>
     <priority>0.9</priority>
   </url>
   <url>
-    <loc>https://maison-velours-site.vercel.app/massage-nuru.html</loc>
+    <loc>https://lamaisonvelours.com/massage-nuru.html</loc>
     <priority>0.9</priority>
   </url>
   <url>
-    <loc>https://maison-velours-site.vercel.app/massage-tantra.html</loc>
+    <loc>https://lamaisonvelours.com/massage-tantra.html</loc>
     <priority>0.9</priority>
   </url>
   <url>
-    <loc>https://maison-velours-site.vercel.app/equipe.html</loc>
+    <loc>https://lamaisonvelours.com/equipe.html</loc>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://maison-velours-site.vercel.app/galerie.html</loc>
+    <loc>https://lamaisonvelours.com/galerie.html</loc>
     <priority>0.6</priority>
   </url>
   <url>
-    <loc>https://maison-velours-site.vercel.app/contact.html</loc>
+    <loc>https://lamaisonvelours.com/contact.html</loc>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://maison-velours-site.vercel.app/blog.html</loc>
+    <loc>https://lamaisonvelours.com/blog.html</loc>
     <priority>0.6</priority>
   </url>
   <url>
-    <loc>https://maison-velours-site.vercel.app/guide-massage-marseille.html</loc>
+    <loc>https://lamaisonvelours.com/guide-massage-marseille.html</loc>
     <priority>0.6</priority>
   </url>
   <url>
-    <loc>https://maison-velours-site.vercel.app/massage-a-domicile-marseille.html</loc>
+    <loc>https://lamaisonvelours.com/massage-a-domicile-marseille.html</loc>
     <priority>0.6</priority>
   </url>
   <url>
-    <loc>https://maison-velours-site.vercel.app/bienfaits-massage-relaxation-marseille.html</loc>
+    <loc>https://lamaisonvelours.com/bienfaits-massage-relaxation-marseille.html</loc>
     <priority>0.6</priority>
   </url>
 </urlset>

@@ -3,4 +3,4 @@ Allow: /
 Disallow: /dashboard.html
 Disallow: /api/
 
-Sitemap: https://maison-velours-site.vercel.app/sitemap.xml
+Sitemap: https://lamaisonvelours.com/sitemap.xml
