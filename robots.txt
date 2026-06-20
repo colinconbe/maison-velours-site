@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://maison-velours-site.vercel.app/sitemap.xml
