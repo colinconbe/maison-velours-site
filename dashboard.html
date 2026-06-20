@@ -229,10 +229,11 @@
         }
       }
 
-      // Auto-login si mot de passe déjà en session
-      if (getPwd()) {
-        loadData();
-      }
+      // Le mot de passe doit être ressaisi à chaque visite : on efface toute session précédente
+      // et on n'affiche jamais le tableau de bord sans authentification réussie.
+      sessionStorage.removeItem("dash_pwd");
+      document.getElementById("login").style.display = "block";
+      document.getElementById("dashboard").style.display = "none";
     </script>
   </body>
 </html>
