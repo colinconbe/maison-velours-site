@@ -28,4 +28,20 @@
     <loc>https://maison-velours-site.vercel.app/contact.html</loc>
     <priority>0.8</priority>
   </url>
+  <url>
+    <loc>https://maison-velours-site.vercel.app/blog.html</loc>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://maison-velours-site.vercel.app/guide-massage-marseille.html</loc>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://maison-velours-site.vercel.app/massage-a-domicile-marseille.html</loc>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://maison-velours-site.vercel.app/bienfaits-massage-relaxation-marseille.html</loc>
+    <priority>0.6</priority>
+  </url>
 </urlset>
